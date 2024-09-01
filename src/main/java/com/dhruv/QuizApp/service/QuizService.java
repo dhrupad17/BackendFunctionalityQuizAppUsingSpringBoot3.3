@@ -3,6 +3,7 @@ package com.dhruv.QuizApp.service;
 import com.dhruv.QuizApp.model.Question;
 import com.dhruv.QuizApp.model.QuestionWrapper;
 import com.dhruv.QuizApp.model.Quiz;
+import com.dhruv.QuizApp.model.Response;
 import com.dhruv.QuizApp.repo.QuestionRepo;
 import com.dhruv.QuizApp.repo.QuizRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +46,29 @@ public class QuizService {
         }
 
         return new ResponseEntity<>(questionsForUser,HttpStatus.OK);
+    }
+
+
+    public ResponseEntity<String> calculateResult(Integer id, List<Response> responses) {
+        Quiz quiz = quizRepo.findById(id).orElseThrow(() -> new RuntimeException("Quiz not found"));
+        List<Question> questions = quiz.getQuestions();
+        int rightAns = 0;
+        int countQuestions = 0;
+
+        for (Response res : responses) {
+            if (res.getResponse().equals(questions.get(countQuestions).getRightanswer())) {
+                rightAns++;
+            }
+            countQuestions++;
+        }
+
+        // Calculate the accuracy percentage
+        double accuracyPercentage = ((double) rightAns / questions.size()) * 100;
+
+        // Create the result message
+        String resultMessage = String.format("You have Successfully completed the quiz with %.2f%% accuracy", accuracyPercentage);
+
+        return new ResponseEntity<>(resultMessage, HttpStatus.OK);
     }
 
 

@@ -2,6 +2,7 @@ package com.dhruv.QuizApp.controller;
 
 import com.dhruv.QuizApp.model.Question;
 import com.dhruv.QuizApp.model.QuestionWrapper;
+import com.dhruv.QuizApp.model.Response;
 import com.dhruv.QuizApp.service.QuizService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -25,4 +26,10 @@ public class QuizController {
     public ResponseEntity<List<QuestionWrapper>> getQuizQuestions(@PathVariable Integer id){
         return quizService.getQuizQuestions(id);
     }
+
+    @PostMapping("submit/{id}")
+    public ResponseEntity<String> submitQuiz(@PathVariable Integer id, @RequestBody List<Response> responses) {
+        return quizService.calculateResult(id, responses);
+    }
+
 }
